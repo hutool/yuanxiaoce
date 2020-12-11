@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="admin/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">标签管理</h3>
+                    </div> <!-- /.card-body -->
+                    <div class="card-body">
+                        <div class="grid-btn">
+                            <input type="text" class="form-control col-2" id="tagName" name="tagName"
+                                       placeholder="标签名称" required="true">&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-info" onclick="tagAdd()"><i
+                                    class="fa fa-plus"></i>&nbsp;新增
+                            </button>
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>标签名称</th>
+                                <th>添加时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="tag,iterStat : ${page.getList()}">
+                                <td th:text="${iterStat.count} + (${page.pageNum}-1)*${page.pageSize}"></td>
+                                <td th:text="${tag.tagName}"></td>
+                                <td th:text="${#calendars.format(tag.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td>
+                                    <button class="btn btn-danger"
+                                            th:onclick="deleteTag([[${tag.tagId}]])">
+                                        <i class="fa fa-trash-o"></i>&nbsp;删除
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- 分页 -->
+                        <div class="card-footer">
+                            共&nbsp;<span th:text="${page.total}"></span>&nbsp;条结果
+                            <div class="float-right">
+                                <a th:href="@{/admin/tags(pageNum = ${page.pageNum} - 1)}" class="page-btn">&laquo;</a>
+                                <span th:each="item : ${page.navigatepageNums}">
+                                    <a th:href="@{/admin/tags(pageNum = ${item})}" th:text="${item}" class="page-btn" th:classappend="${item}==${page.pageNum}?'activity'"></a>
+                                </span>
+                                <a th:href="@{/admin/tags(pageNum = ${page.pageNum} + 1)}" class="page-btn">&raquo;</a>
+                            </div>
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    <br>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/dist/js/tag.js}"></script>
+</body>
+</html>

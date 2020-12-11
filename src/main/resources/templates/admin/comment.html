@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        white-space: normal !important;
+        height: auto;
+        vertical-align: text-top;
+        padding-top: 2px;
+    }
+</style>
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="admin/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">评论管理</h3>
+                    </div> <!-- /.card-body -->
+                    <div class="card-body">
+                        <div class="grid-btn">
+                            <button class="btn btn-success" onclick="checkDoneComments()"><i
+                                    class="fa fa-check"></i>&nbsp;批量审核
+                            </button>
+                            <button class="btn btn-info" onclick="reply()"><i
+                                    class="fa fa-reply"></i>&nbsp;回复
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteComments()"><i
+                                    class="fa fa-trash-o"></i>&nbsp;批量删除
+                            </button>
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="checkAll">
+                                </th>
+                                <th>被评博客</th>
+                                <th>评论内容</th>
+                                <th>评论时间</th>
+                                <th>评论人名称</th>
+                                <th>评论人邮箱</th>
+                                <th>状态</th>
+                                <th>回复内容</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="comment : ${page.getList()}">
+                                <td>
+                                    <input type="checkbox" name="ids" th:id="${comment.commentId}">
+                                </td>
+                                <td th:text="${comment.blogTitle}"></td>
+                                <td th:text="${comment.commentBody}"></td>
+                                <td th:text="${#calendars.format(comment.commentCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td th:text="${comment.commentator}"></td>
+                                <td th:text="${comment.email}"></td>
+                                <td>
+                                    <span th:if="${comment.commentStatus} == 1" class="labels label-success">审核通过</span>
+                                    <span th:if="${comment.commentStatus} == 0" class="labels label-warning">未审核</span>
+                                </td>
+                                <td th:text="${comment.replyBody}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- 分页 -->
+                        <div class="card-footer">
+                            共&nbsp;<span th:text="${page.total}"></span>&nbsp;条结果
+                            <div class="float-right">
+                                <a th:href="@{/admin/comments(pageNum = ${page.pageNum} - 1)}" class="page-btn">&laquo;</a>
+                                <span th:each="item : ${page.navigatepageNums}">
+                                    <a th:href="@{/admin/comments(pageNum = ${item})}" th:text="${item}" class="page-btn" th:classappend="${item}==${page.pageNum}?'activity'"></a>
+                                </span>
+                                <a th:href="@{/admin/comments(pageNum = ${page.pageNum} + 1)}" class="page-btn">&raquo;</a>
+                            </div>
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+        <div class="content">
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h6 class="modal-title" id="replyModalLabel">评论回复</h6>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="replyForm">
+                                <input type="hidden" class="form-control" id="commentId" name="commentId">
+                                <div class="form-group">
+                                    <label for="replyBody" class="control-label">回复内容:</label>
+                                    <textarea type="text" class="form-control" id="replyBody" name="replyBody"
+                                              placeholder="请输入回复内容" required="true"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="saveButton">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/dist/js/comment.js}"></script>
+</body>
+</html>

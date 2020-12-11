@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment">
+</header>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <div th:replace="admin/header::header-nav"></div>
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">分类管理</h3>
+                    </div> <!-- /.card-body -->
+                    <div class="card-body">
+                        <div class="grid-btn">
+                            <button class="btn btn-info" id="saveCategory">
+                                <i class="fa fa-plus"></i>&nbsp;新增分类
+                            </button>
+                        </div>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>分类名称</th>
+                                <th>添加时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="category,iterStat : ${page.getList()}">
+                                <td th:text="${iterStat.count} + (${page.pageNum}-1)*${page.pageSize}"></td>
+                                <td th:text="${category.categoryName}"></td>
+                                <td th:text="${#calendars.format(category.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <td>
+                                    <button class="btn btn-info" th:onclick="updateCategory([[${category.categoryId}]])">
+                                        <i class="fa fa-pencil-square-o"></i>&nbsp;修改
+                                    </button>
+                                    <button class="btn btn-danger"
+                                            th:onclick="deleteCategory([[${category.categoryId}]])">
+                                        <i class="fa fa-trash-o"></i>&nbsp;删除
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- 分页 -->
+                        <div class="card-footer">
+                            共&nbsp;<span th:text="${page.total}"></span>&nbsp;条结果
+                            <div class="float-right">
+                                <a th:href="@{/admin/categories(pageNum = ${page.pageNum} - 1)}" class="page-btn">&laquo;</a>
+                                <span th:each="item : ${page.navigatepageNums}">
+                                    <a th:href="@{/admin/categories(pageNum = ${item})}" th:text="${item}" class="page-btn" th:classappend="${item}==${page.pageNum}?'activity'"></a>
+                                </span>
+                                <a th:href="@{/admin/categories(pageNum = ${page.pageNum} + 1)}" class="page-btn">&raquo;</a>
+                            </div>
+                        </div>
+                    </div><!-- /.card-body -->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div><!-- /.content -->
+        <div class="content">
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="categoryModalLabel">Modal</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="categoryForm">
+                                <div class="form-group">
+                                    <div class="alert alert-danger" id="edit-error-msg" style="display: none;">
+                                        错误信息展示栏。
+                                    </div>
+                                </div>
+                                <input type="hidden" class="form-control" id="categoryId" name="categoryId">
+                                <div class="form-group">
+                                    <label for="categoryName" class="control-label">分类名称:</label>
+                                    <input type="text" class="form-control" id="categoryName" name="categoryName"
+                                           placeholder="请输入分类名称" required="true">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="saveButton">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div><!-- /.content-wrapper -->
+    <br>
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- jqgrid -->
+<!--<script th:src="@{/admin/plugins/jqgrid-5.3.0/jquery.jqGrid.min.js}"></script>
+<script th:src="@{/admin/plugins/jqgrid-5.3.0/grid.locale-cn.js}"></script>-->
+<!-- image-picker -->
+<script th:src="@{/admin/plugins/image-picker/query.masonry.min.js}"></script>
+<script th:src="@{/admin/plugins/image-picker/image-picker.min.js}"></script>
+
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/dist/js/category.js}"></script>
+</body>
+</html>

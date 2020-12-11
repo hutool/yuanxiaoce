@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.dao.TagMapper">
+    <resultMap id="tagMap" type="com.blog.entity.Tag">
+        <id column="tag_id" property="tagId"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="tagMap">
+        select * from tb_blog_tag where is_deleted = 0 order by tag_id desc
+    </select>
+
+    <select id="selectById" resultMap="tagMap" >
+        select * from tb_blog_tag where tag_id = #{tagId} and is_deleted = 0
+    </select>
+
+    <select id="selectByName" resultMap="tagMap">
+        select * from tb_blog_tag where tag_name = #{tagName} and is_deleted = 0
+    </select>
+
+    <select id="findTagForIndexPage" resultMap="tagMap">
+        select * from tb_blog_tag
+        where is_deleted = 0 order by tag_id desc
+        limit #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.blog.entity.Tag" >
+        insert into tb_blog_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">
+                tag_id,
+            </if>
+            <if test="tagName != null">
+                tag_name,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">
+                #{tagId,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null">
+                #{tagName,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="batchInsertTag" parameterType="com.blog.entity.Tag" useGeneratedKeys="true"
+            keyProperty="tagId">
+        insert into tb_blog_tag(tag_name)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.tagName,jdbcType=VARCHAR})
+        </foreach>
+
+    </insert>
+
+    <update id="deleteById" >
+        update tb_blog_tag set is_deleted = 1
+        where tag_id = #{tagId} and is_deleted = 0
+    </update>
+</mapper>

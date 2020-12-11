@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment"></header>
+<body class="hold-transition sidebar-mini">
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        white-space: normal !important;
+        height: auto;
+        vertical-align: text-top;
+        padding-top: 2px;
+    }
+</style>
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="admin/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">博客管理</h3>
+                    </div> <!-- /.card-body -->
+                    <div class="card-body">
+                        <div class="grid-btn">
+                            <button class="btn btn-success" onclick="addBlog()"><i
+                                    class="fa fa-plus"></i>&nbsp;新增
+                            </button>
+                            <button class="btn btn-info" onclick="editBlog()"><i
+                                    class="fa fa-edit"></i>&nbsp;修改
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteBlog()"><i
+                                    class="fa fa-trash-o"></i>&nbsp;删除
+                            </button>&nbsp;&nbsp;
+                            <input type="text" placeholder="标题/分类" id="keyword" class="form-control col-2">&nbsp;
+                            <button class="btn btn-info" onclick="search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索
+                            </button>
+                            </div>
+                        </div>
+                        <div id="table" th:fragment="table">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="checkAll">
+                                    </th>
+                                    <th>标题</th>
+                                    <th>预览图</th>
+                                    <th>浏览量</th>
+                                    <th>博客分类</th>
+                                    <th>状态</th>
+                                    <th>添加时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="blog : ${page.getList()}" >
+                                    <td>
+                                        <input th:id="${blog.blogId}" type="checkbox" name="ids">
+                                    </td>
+                                    <td th:text="${blog.blogTitle}"></td>
+                                    <td>
+                                        <img th:src="${blog.blogCoverImage}" style="width: 90px; height: 45px">
+                                    </td>
+                                    <td th:text="${blog.blogViews}"></td>
+                                    <td th:text="${blog.blogCategoryName}"></td>
+                                    <td>
+                                        <span th:if="${blog.blogStatus} == 1" class="labels label-success">发布</span>
+                                        <span th:if="${blog.blogStatus} == 0" class="labels label-warning">草稿</span>
+                                    </td>
+                                    <td th:text="${#calendars.format(blog.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!-- 分页 -->
+                            <div class="card-footer">
+                                共&nbsp;<span th:text="${page.total}"></span>&nbsp;条结果
+                                <div class="float-right">
+                                    <button th:onclick="page([[${page.pageNum}-1]])" class="page-btn">&laquo;</button>
+                                    <span th:each="item : ${page.navigatepageNums}">
+                                        <button th:onclick="page([[${item}]])" th:text="${item}" class="page-btn" th:classappend="${item}==${page.pageNum}?'activity'"></button>
+                                    </span>
+                                    <button th:onclick="page([[${page.pageNum}+1]])" class="page-btn">&raquo;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /.card-body -->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- jqgrid -->
+<script th:src="@{/admin/plugins/jqgrid-5.3.0/jquery.jqGrid.min.js}"></script>
+<script th:src="@{/admin/plugins/jqgrid-5.3.0/grid.locale-cn.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/dist/js/blog.js}"></script>
+</body>
+</html>
